@@ -17,9 +17,13 @@ fn make_relative_rename_path(track: &Track, output_path: &PathBuf) -> Result<Pat
             .artist()
             .unwrap_or_else(|| "Unknown Artist".to_string()),
     ));
-    path.push(&sanitise_path_part(
-        &tags.album().unwrap_or_else(|| "Unknown Album".to_string()),
-    ));
+
+    let album_name = tags.album().unwrap_or_else(|| "Unknown Album".to_string());
+    let album_dir_name = match tags.year() {
+	Some(year) => format!("{} {}", year, album_name),
+	None => album_name
+    };
+    path.push(&sanitise_path_part(&album_dir_name));
 
     let extension = track
         .path
